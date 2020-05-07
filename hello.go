@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
+
+const monitoramentos = 2
+const delay = 3
 
 func main() {
 	exibeIntroducao()
@@ -24,6 +28,7 @@ func exibeIntroducao() {
 }
 
 func exibeMenu() {
+	fmt.Println()
 	fmt.Println("1- Iniciar Monitoramento")
 	fmt.Println("2- Exibir Logs")
 	fmt.Println("0- Sair do Programa")
@@ -52,9 +57,25 @@ func trataMenu(comando int) {
 }
 
 func iniciarMonitoramento() {
+	sites := make([]string, 2)
+	fmt.Println()
 	fmt.Println("Monitorando...")
-	// site := "https://www.alura.com.br"
-	site := "https://random-status-code.herokuapp.com/"
+	sites[0] = "https://www.alura.com.br"
+	sites[1] = "https://random-status-code.herokuapp.com/"
+	sites = append(sites, "https://www.caelum.com.br")
+	for i := 0; i < monitoramentos; i++ {
+		fmt.Println("Monitoramento", i+1)
+		for _, site := range sites {
+			testaSite(site)
+		}
+		if i < (monitoramentos - 1) {
+			time.Sleep(delay * time.Second)
+			fmt.Println()
+		}
+	}
+}
+
+func testaSite(site string) {
 	resp, _ := http.Get(site)
 	if resp.StatusCode == 200 {
 		fmt.Println("Site:", site, "foi carregado com sucesso!")
